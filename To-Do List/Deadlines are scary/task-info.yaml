@@ -1,15 +1,5 @@
 type: edu
 files:
-- name: todolist/todolist.py
-  visible: true
-  text: |
-    # Write your code here
-    print("Today:")
-    print("1) Do yoga")
-    print("2) Make breakfast")
-    print("3) Learn basics of SQL")
-    print("4) Learn what is ORM")
-  learner_created: false
 - name: tests.py
   visible: false
   text: |
@@ -303,6 +293,16 @@ files:
 
     if __name__ == '__main__':
         ToDoList('todolist.todolist').run_tests()
+  learner_created: false
+- name: todolist/todolist.py
+  visible: true
+  text: |
+    # Write your code here
+    print("Today:")
+    print("1) Do yoga")
+    print("2) Make breakfast")
+    print("3) Learn basics of SQL")
+    print("4) Learn what is ORM")
   learner_created: false
 feedback_link: https://hyperskill.org/projects/105/stages/572/implement#comment
 status: Unchecked
