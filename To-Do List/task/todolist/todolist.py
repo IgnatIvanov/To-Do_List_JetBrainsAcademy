@@ -1,15 +1,10 @@
 # Write your code here
-# print("Today:")
-# print("1) Do yoga")
-# print("2) Make breakfast")
-# print("3) Learn basics of SQL")
-# print("4) Learn what is ORM")
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Date
 from sqlalchemy.orm import sessionmaker
-from datetime import datetime
+from datetime import datetime, timedelta
 
 engine = create_engine('sqlite:///todo.db?check_same_thread=False')
 
@@ -28,8 +23,20 @@ class Table(Base):
 
 
 main_menu = """1) Today's tasks
-2) Add task
+2) Week's tasks
+3) All tasks
+4) Add task
 0) Exit"""
+
+dict_weeksdays = {
+    0: 'Monday',
+    1: 'Tuesday',
+    2: 'Wednesday',
+    3: 'Thursday',
+    4: 'Friday',
+    5: 'Saturday',
+    6: 'Sunday'
+}
 
 Base.metadata.create_all(engine)  # Create datamodel in our DB
 
@@ -43,10 +50,10 @@ while main_option != 0:
 
     if main_option == 1:  # Today task menu option
         rows = session.query(Table).all()
-        # first_row = rows[0]
 
         count = 0
-        print("Today:")
+        today = datetime.today()
+        print("Today " + str(datetime.today().day) + ' ' + str(today.strftime('%b')) + ":")
         if len(rows) == 0:
             print('Nothing to do!')
 
@@ -61,12 +68,48 @@ while main_option != 0:
                 print('Nothing to do!')
         print()
 
-    if main_option == 2:  # Add task menu option
+    if main_option == 2:  # Week`s tasks menu option
+        today = datetime.today()
+
+        for x in range(7):
+            # Printing date header
+            cur_date = today + timedelta(days=x)
+            print(dict_weeksdays[cur_date.weekday()], cur_date.day, cur_date.strftime('%b') + ':')
+
+            rows = session.query(Table).filter(Table.deadline == cur_date.date()).all()  # Query to the DB
+
+            count = 0
+            if len(rows) == 0:
+                print('Nothing to do!')
+
+            else:
+                for row in rows:
+                    count += 1
+                    print(str(count) + ".", row.task)
+
+                if count == 0:
+                    print('Nothing to do!')
+
+            print()  # Printing empty line between tasks
+
+    if main_option == 3:  # All tasks menu option
+        print('All tasks:')
+        rows = session.query(Table).order_by(Table.deadline).all()  # Query to the DB
+        count = 0
+        for row in rows:
+            count += 1
+            date = datetime.strptime(str(row.deadline), '%Y-%m-%d')
+            print(str(count) + '.', row.task + '.', str(date.day), date.strftime('%b'))
+
+        print()
+
+    if main_option == 4:  # Add task menu option
         print('Enter task')
         new_task = str(input())
+        print('Enter deadline')
+        u_deadline = datetime.strptime(str(input()), '%Y-%m-%d')
 
-        # new_row = Table(task='new_task', deadline=datetime.strptime('01-24-2020', '%m-%d-%Y').date())
-        new_row = Table(task=new_task, deadline=datetime.today())
+        new_row = Table(task=new_task, deadline=u_deadline.date())
         session.add(new_row)
         session.commit()
 

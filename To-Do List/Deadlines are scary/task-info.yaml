@@ -305,5 +305,8 @@ files:
     print("4) Learn what is ORM")
   learner_created: false
 feedback_link: https://hyperskill.org/projects/105/stages/572/implement#comment
-status: Unchecked
+status: Solved
+feedback:
+  message: Congratulations!
+  time: Fri, 19 Feb 2021 22:44:26 UTC
 record: -1
