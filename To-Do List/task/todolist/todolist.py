@@ -25,7 +25,9 @@ class Table(Base):
 main_menu = """1) Today's tasks
 2) Week's tasks
 3) All tasks
-4) Add task
+4) Missed tasks
+5) Add task
+6) Delete task
 0) Exit"""
 
 dict_weeksdays = {
@@ -103,7 +105,22 @@ while main_option != 0:
 
         print()
 
-    if main_option == 4:  # Add task menu option
+    if main_option == 4:  # Missed tasks menu option
+        print('Missed tasks:')
+        rows = session.query(Table).filter(Table.deadline < datetime.today().date()).all()
+        if len(rows) == 0:
+            print('Nothing is missed!')
+
+        else:
+            count = 0
+            for row in rows:
+                count += 1
+                date = datetime.strptime(str(row.deadline), '%Y-%m-%d')
+                print(str(count) + '.', row.task + '.', str(date.day), date.strftime('%b'))
+
+        print()
+
+    if main_option == 5:  # Add task menu option
         print('Enter task')
         new_task = str(input())
         print('Enter deadline')
@@ -114,6 +131,22 @@ while main_option != 0:
         session.commit()
 
         print('The task has been added!')
+        print()
+
+    if main_option == 6:  # Delete task menu option
+        print('Choose the number of the task you want to delete:')
+        rows = session.query(Table).order_by(Table.deadline).all()
+        count = 0
+        for row in rows:
+            count += 1
+            date = datetime.strptime(str(row.deadline), '%Y-%m-%d')
+            print(str(count) + '.', row.task + '.', str(date.day), date.strftime('%b'))
+
+        delete_id = int(input()) - 1
+        specific_row = rows[delete_id]
+        session.delete(specific_row)
+        session.commit()
+        print('The task has been deleted!')
         print()
 
 print("Bye!")
